@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Elite Core Media — Content Agency</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --neon:#00BFFF;--neon2:#0055ff;
+  --bg:#06090f;--bg2:#080c16;--bg3:#0b0f1a;
+  --text:#d2dff0;--muted:#4e5e7a;
+  --f:'Plus Jakarta Sans',sans-serif;
+  --glass:rgba(255,255,255,0.05);--gb:rgba(255,255,255,0.09);--nb:rgba(0,191,255,0.16);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--f);font-size:16px;line-height:1.7;overflow-x:hidden}
+
+/* BG CANVAS */
+#bgc{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* INTRO */
+#intro{position:fixed;inset:0;z-index:9000;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:opacity .9s ease,transform .9s ease}
+#intro.out{opacity:0;transform:scale(1.04);pointer-events:none}
+#ic{position:absolute;inset:0}
+#intro::before{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);animation:scanroll 8s linear infinite;}
+#intro::after{content:'';position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(transparent 0%,rgba(0,191,255,.015) 50%,transparent 100%);animation:scanbeam 3s ease-in-out infinite;}
+@keyframes scanroll{from{background-position:0 0}to{background-position:0 100px}}
+@keyframes scanbeam{0%,100%{transform:translateY(-100%);opacity:0}50%{opacity:1}60%{transform:translateY(100vh);opacity:0}}
+.ilw{position:relative;z-index:5;text-align:center;opacity:0;transform:scale(0.84);transition:opacity .65s ease,transform .65s ease}
+.ilw.show{opacity:1;transform:scale(1)}
+.ilogo{font-family:var(--f);font-size:clamp(32px,7vw,76px);font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.1;text-align:center}
+.ilogo .w1,.ilogo .w2,.ilogo .w3{display:inline-block;opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}
+.ilogo .w1{transition-delay:.1s}.ilogo .w2{transition-delay:.3s}.ilogo .w3{transition-delay:.5s}
+.ilw.show .w1,.ilw.show .w2,.ilw.show .w3{opacity:1;transform:none}
+.ilogo .w2{color:var(--neon);text-shadow:0 0 30px rgba(0,191,255,.95),0 0 70px rgba(0,191,255,.45)}
+.ilogo .w3{color:rgba(255,255,255,.75)}
+.itagline{font-size:clamp(10px,1.8vw,13px);font-weight:500;letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-top:14px;opacity:0;transition:opacity .6s ease .8s}
+.ilw.show .itagline{opacity:1}
+.ibar{width:0;height:1px;background:linear-gradient(90deg,transparent,var(--neon),transparent);margin:18px auto 0;transition:width 1.2s cubic-bezier(.4,0,.2,1) .6s;box-shadow:0 0 8px rgba(0,191,255,.6)}
+.ibar.grow{width:220px}
+.icorners{position:absolute;inset:0;z-index:5;pointer-events:none}
+.icorners span{position:absolute;width:28px;height:28px;opacity:0;transition:opacity .4s ease 1s}
+.ilw.show ~ .icorners span{opacity:1}
+.ic-tl{top:15%;left:10%;border-top:1px solid rgba(0,191,255,.5);border-left:1px solid rgba(0,191,255,.5)}
+.ic-tr{top:15%;right:10%;border-top:1px solid rgba(0,191,255,.5);border-right:1px solid rgba(0,191,255,.5)}
+.ic-bl{bottom:15%;left:10%;border-bottom:1px solid rgba(0,191,255,.5);border-left:1px solid rgba(0,191,255,.5)}
+.ic-br{bottom:15%;right:10%;border-bottom:1px solid rgba(0,191,255,.5);border-right:1px solid rgba(0,191,255,.5)}
+.iprog{position:absolute;bottom:0;left:0;z-index:5;height:2px;width:0;background:linear-gradient(90deg,transparent,var(--neon),rgba(0,191,255,.4));transition:width 3.2s linear;box-shadow:0 0 10px rgba(0,191,255,.5)}
+.iprog.run{width:100%}
+@keyframes glitch1{0%,90%,100%{clip-path:none;transform:none}92%{clip-path:inset(20% 0 60% 0);transform:translateX(-3px)}94%{clip-path:inset(60% 0 20% 0);transform:translateX(3px)}96%{clip-path:none;transform:none}}
+@keyframes glitch2{0%,88%,100%{opacity:1}89%{opacity:.7}91%{opacity:.4}92%{opacity:1}}
+.ilw.show .ilogo{animation:glitch1 6s ease-in-out infinite 2s,glitch2 6s ease-in-out infinite 2s}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:center;justify-content:space-between;padding:20px 6%;transition:all .3s}
+nav.s{background:rgba(6,9,15,.82);backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,191,255,.07);padding:12px 6%}
+.nlogo{font-family:var(--f);font-size:20px;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-.5px}
+.nlogo em{font-style:normal;color:var(--neon);text-shadow:0 0 14px rgba(0,191,255,.6)}
+.nlinks{display:flex;gap:28px;list-style:none}
+.nlinks a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s}
+.nlinks a:hover{color:var(--neon)}
+.ncta{padding:9px 22px;border-radius:50px;background:rgba(0,191,255,.08);border:1px solid rgba(0,191,255,.32);color:var(--neon);font-family:var(--f);font-size:13px;font-weight:600;text-decoration:none;transition:all .3s}
+.ncta:hover{background:var(--neon);color:#000;box-shadow:0 0 32px rgba(0,191,255,.4)}
+.hbg{display:none;flex-direction:column;gap:5px;cursor:pointer}
+.hbg span{width:22px;height:2px;background:var(--text);border-radius:2px}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;padding:150px 6% 90px;position:relative;z-index:1;overflow:hidden}
+.hg1{position:absolute;top:-160px;right:-60px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(0,100,255,.1) 0%,transparent 70%);pointer-events:none}
+.hg2{position:absolute;bottom:-80px;left:-60px;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,rgba(0,191,255,.07) 0%,transparent 70%);animation:hfl 7s ease-in-out infinite;pointer-events:none}
+@keyframes hfl{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+.hcon{max-width:640px;position:relative;z-index:2}
+.hbadge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:50px;margin-bottom:24px;background:rgba(0,191,255,.07);border:1px solid rgba(0,191,255,.18);font-size:11px;font-weight:600;color:var(--neon);letter-spacing:2px;text-transform:uppercase}
+.bd{width:6px;height:6px;border-radius:50%;background:var(--neon);box-shadow:0 0 6px var(--neon);animation:bd 1.6s ease-in-out infinite}
+@keyframes bd{0%,100%{opacity:1}50%{opacity:.2}}
+.hh1{font-family:var(--f);font-size:clamp(42px,6.5vw,80px);font-weight:800;line-height:1.06;letter-spacing:-2px;color:#fff;margin-bottom:20px}
+.glow{color:var(--neon);text-shadow:0 0 20px rgba(0,191,255,.75),0 0 50px rgba(0,191,255,.3)}
+.hsub{font-size:16px;color:var(--muted);max-width:440px;line-height:1.88;margin-bottom:38px;font-weight:400}
+.hbtns{display:flex;gap:12px;flex-wrap:wrap}
+.bb{padding:13px 32px;border-radius:50px;background:linear-gradient(135deg,rgba(0,85,255,.65),rgba(0,191,255,.55));border:1px solid rgba(0,191,255,.5);color:#fff;font-family:var(--f);font-weight:700;font-size:14px;text-decoration:none;backdrop-filter:blur(10px);box-shadow:0 0 26px rgba(0,130,255,.3),inset 0 1px 0 rgba(255,255,255,.12);transition:all .3s;display:inline-block;cursor:pointer}
+.bb:hover{transform:translateY(-3px);box-shadow:0 0 50px rgba(0,191,255,.5)}
+.bo{padding:13px 32px;border-radius:50px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.11);color:var(--text);font-family:var(--f);font-weight:500;font-size:14px;text-decoration:none;backdrop-filter:blur(10px);transition:all .3s;display:inline-block}
+.bo:hover{border-color:rgba(0,191,255,.4);color:var(--neon)}
+.hpills{display:flex;flex-wrap:wrap;gap:9px;margin-top:44px}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:50px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:12px;color:var(--muted);font-weight:500;backdrop-filter:blur(8px);transition:all .3s}
+.pill:hover{border-color:rgba(0,191,255,.3);color:var(--neon)}
+
+/* STATS */
+#stats{position:relative;z-index:1;padding:48px 6%;background:rgba(255,255,255,.02);border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05);backdrop-filter:blur(8px)}
+.srow{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.sbox{padding:22px 16px;text-align:center;border-right:1px solid rgba(255,255,255,.05)}
+.sbox:last-child{border-right:none}
+.snum{font-family:var(--f);font-size:clamp(26px,3.8vw,46px);font-weight:800;color:#fff;line-height:1}
+.snum b{color:var(--neon);text-shadow:0 0 12px rgba(0,191,255,.6);font-weight:800}
+.slbl{font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:.5px;text-transform:uppercase}
+
+/* SECTION BASE */
+.sec{padding:90px 0;position:relative;z-index:1}
+.sh{padding:0 6%;max-width:1200px;margin:0 auto}
+.stag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.stag::before{content:'';width:20px;height:1px;background:var(--neon);box-shadow:0 0 4px var(--neon)}
+.stit{font-family:var(--f);font-size:clamp(26px,4vw,48px);font-weight:800;line-height:1.1;letter-spacing:-1.5px;color:#fff;margin-bottom:10px}
+.ssub{font-size:15px;color:var(--muted);max-width:460px;line-height:1.85;margin-bottom:0;font-weight:400}
+
+/* CAROUSEL */
+.car-wrap{position:relative;overflow:hidden;margin-top:36px;padding:0 6%}
+.car-track{display:flex;gap:16px;transition:transform .65s cubic-bezier(.25,.46,.45,.94);will-change:transform;cursor:grab}
+.car-track:active{cursor:grabbing}
+
+/* VIDEO CARD */
+.vc{flex-shrink:0;width:280px;border-radius:18px;overflow:hidden;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 4px 24px rgba(0,0,0,.3);transition:transform .3s,border-color .3s,box-shadow .3s}
+.vc:hover{transform:translateY(-6px);border-color:rgba(0,191,255,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 16px 40px rgba(0,80,200,.22)}
+.vth{aspect-ratio:16/9;position:relative;overflow:hidden}
+.vin{padding:14px 16px}
+.vcat{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:4px;font-weight:600}
+.vtit{font-family:var(--f);font-size:14px;font-weight:700;color:#fff;line-height:1.3}
+.vmeta{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* THUMB CARD */
+.tc{flex-shrink:0;width:240px;border-radius:14px;overflow:hidden;position:relative;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 4px 24px rgba(0,0,0,.3);transition:transform .3s,border-color .3s,box-shadow .3s}
+.tc:hover{transform:translateY(-6px) scale(1.02);border-color:rgba(0,191,255,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 16px 40px rgba(0,0,0,.4)}
+.ta{aspect-ratio:16/9;position:relative;overflow:hidden}
+.tho{position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,transparent 100%);opacity:0;transition:opacity .3s}
+.tc:hover .tho{opacity:1}
+.tlb{font-size:11px;color:#fff;font-weight:600}
+
+/* CAROUSEL CONTROLS */
+.car-ctrl{display:flex;align-items:center;gap:10px;margin-top:20px;padding:0 6%}
+.carr{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;backdrop-filter:blur(8px)}
+.carr:hover{border-color:var(--neon);color:var(--neon);box-shadow:0 0 16px rgba(0,191,255,.2)}
+.cdots{display:flex;gap:6px;margin-left:4px}
+.cdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.15);cursor:pointer;transition:all .3s}
+.cdot.on{background:var(--neon);width:22px;border-radius:3px;box-shadow:0 0 7px rgba(0,191,255,.5)}
+
+/* CHANNELS */
+#channels{padding:80px 6%;position:relative;z-index:1;background:var(--bg2)}
+.ch-inner{max-width:1100px;margin:0 auto}
+.ch-card{flex-shrink:0;width:220px;border-radius:18px;padding:20px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 4px 20px rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;gap:12px;transition:transform .3s,border-color .3s;cursor:default;text-align:center}
+.ch-card:hover{transform:translateY(-5px);border-color:rgba(0,191,255,.22)}
+.ch-name{font-family:var(--f);font-size:13px;font-weight:700;color:#fff;line-height:1.3}
+.ch-subs{font-size:11px;color:var(--neon);font-weight:600}
+.ch-niche{font-size:10px;color:var(--muted);letter-spacing:.5px;font-weight:500;text-transform:uppercase}
+.ch-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:rgba(0,191,255,.08);border:1px solid rgba(0,191,255,.18);font-size:10px;color:var(--neon);font-weight:600;margin-top:2px}
+.ch-badge::before{content:'✓';font-size:9px}
+.slide-row{display:flex;gap:16px;width:max-content}
+@keyframes scrollRight{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes scrollLeft{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.slide-right{animation:scrollRight 25s linear infinite}
+.slide-left{animation:scrollLeft 25s linear infinite}
+.slide-right:hover,.slide-left:hover{animation-play-state:paused}
+
+/* REVIEWS */
+#reviews{padding:90px 6%;position:relative;z-index:1;background:var(--bg3)}
+.rvp{overflow:hidden;position:relative;margin-top:36px}
+.rtr{display:flex;gap:18px;transition:transform .65s cubic-bezier(.25,.46,.45,.94)}
+.rc{flex-shrink:0;width:calc(50% - 9px);padding:28px 26px;border-radius:20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 8px 32px rgba(0,0,0,.26);transition:border-color .3s}
+.rc:hover{border-color:rgba(0,191,255,.22)}
+.rst{font-size:12px;letter-spacing:3px;margin-bottom:12px;color:#f5c518}
+.rtx{font-size:14px;color:var(--text);line-height:1.88;margin-bottom:20px;font-style:italic;font-weight:400}
+.rau{display:flex;align-items:center;gap:12px}
+.rnm{font-family:var(--f);font-size:13px;font-weight:700;color:#fff}
+.rhd{font-size:11px;color:var(--neon);margin-top:2px;font-weight:500}
+.sct{display:flex;align-items:center;gap:10px;margin-top:22px}
+.sar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:var(--text);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s}
+.sar:hover{border-color:var(--neon);color:var(--neon);box-shadow:0 0 16px rgba(0,191,255,.2)}
+.sds{display:flex;gap:6px;margin-left:3px}
+.sd{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.15);cursor:pointer;transition:all .3s}
+.sd.on{background:var(--neon);width:22px;border-radius:3px;box-shadow:0 0 7px rgba(0,191,255,.5)}
+
+/* PRICING */
+#pricing{padding:90px 6%;position:relative;z-index:1;background:var(--bg2)}
+.pc{border-radius:22px;padding:38px 30px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 4px 26px rgba(0,0,0,.18);position:relative;overflow:hidden;opacity:0;transform:translateY(34px);transition:opacity .7s ease,transform .7s ease,border-color .3s,box-shadow .3s}
+.pc.in{opacity:1;transform:none}
+.pc:hover{border-color:rgba(0,191,255,.18)}
+.pc.in:hover{transform:translateY(-5px)}
+.pc.hot{border-color:rgba(0,191,255,.3);background:rgba(0,100,255,.07);box-shadow:inset 0 1px 0 rgba(0,191,255,.12),0 0 50px rgba(0,100,255,.09)}
+.pc.hot::before{content:'MOST POPULAR';position:absolute;top:18px;right:18px;font-size:8px;font-weight:700;letter-spacing:2px;color:#000;background:var(--neon);padding:3px 10px;border-radius:16px}
+.pgl{position:absolute;top:-60px;right:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(0,150,255,.1) 0%,transparent 70%);pointer-events:none}
+.pbg{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.pcu{font-family:var(--f);font-size:34px;font-weight:800;color:#fff}
+.pds{font-size:13px;color:var(--muted);margin:9px 0 22px;line-height:1.7}
+.pdv{height:1px;background:rgba(255,255,255,.06);margin-bottom:20px}
+.pfl{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.pfl li{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)}
+.pfl li::before{content:'✓';color:var(--neon);font-weight:700;flex-shrink:0}
+
+/* FAQ */
+#faq{padding:90px 6%;position:relative;z-index:1;background:var(--bg)}
+.fwr{max-width:700px;margin:40px auto 0;display:flex;flex-direction:column;gap:10px}
+.fi{border-radius:50px;overflow:hidden;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);backdrop-filter:blur(11px);transition:border-color .3s}
+.fi.op{border-radius:16px;border-color:rgba(0,191,255,.18)}
+.fq{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;cursor:pointer;font-size:14px;color:var(--text);font-weight:600;transition:color .2s}
+.fq:hover{color:#fff}
+.fic{width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);transition:all .35s;flex-shrink:0}
+.fi.op .fic{background:var(--neon);color:#000;border-color:var(--neon);transform:rotate(45deg)}
+.fa{max-height:0;overflow:hidden;font-size:13px;color:var(--muted);line-height:1.8;padding:0 22px;transition:max-height .4s ease,padding .3s}
+.fi.op .fa{max-height:200px;padding:0 22px 16px}
+
+/* CONTACT */
+#contact{padding:90px 6%;position:relative;z-index:1;background:var(--bg2)}
+.cgr{max-width:1100px;margin:40px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.ci{display:flex;gap:16px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,.05);align-items:flex-start}
+.cic{width:44px;height:44px;border:1px solid var(--nb);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--neon);font-size:17px;flex-shrink:0;background:rgba(0,191,255,.05)}
+.clb{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;font-weight:600}
+.cvl{font-size:14px;color:var(--text);font-weight:500}
+.cfm{display:flex;flex-direction:column;gap:12px}
+.crw{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cg{display:flex;flex-direction:column;gap:6px}
+.clbl{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.ci2,.ctxt,.csl{background:var(--bg);border:1px solid rgba(255,255,255,.07);color:var(--text);font-family:var(--f);font-size:14px;padding:11px 15px;transition:border-color .2s;outline:none;width:100%;border-radius:10px}
+.ci2:focus,.ctxt:focus,.csl:focus{border-color:var(--neon)}
+.ctxt{resize:vertical;min-height:110px}
+.csl option{background:var(--bg2)}
+::placeholder{color:var(--muted)}
+
+/* STOP SCROLLING / CTA */
+#cta{position:relative;z-index:1;padding:140px 0;overflow:hidden;background:var(--bg);min-height:100vh;display:flex;align-items:center;justify-content:center;width:100%}
+@keyframes cur{0%,100%{opacity:1}50%{opacity:0}}
+.fr-item{position:absolute;background:transparent;border:none;padding:14px 18px;max-width:240px;font-size:12px;color:rgba(255,255,255,0.18);line-height:1.6;pointer-events:none;font-style:italic}
+.fr-item .fr-name{font-size:10px;color:rgba(0,191,255,0.35);margin-top:7px;font-weight:600;letter-spacing:1px}
+@keyframes fz1{0%,100%{transform:translateY(0) scale(0.96);opacity:0.12}50%{transform:translateY(-14px) scale(1.03);opacity:0.32}}
+@keyframes fz2{0%,100%{transform:translateY(0) scale(1.02);opacity:0.18}50%{transform:translateY(-10px) scale(0.97);opacity:0.38}}
+@keyframes fz3{0%,100%{transform:translateY(-8px) scale(0.98);opacity:0.1}50%{transform:translateY(6px) scale(1.04);opacity:0.28}}
+
+/* FOOTER */
+footer{background:var(--bg);border-top:1px solid rgba(255,255,255,.04);padding:60px 6% 28px;position:relative;z-index:1}
+.fg{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:44px}
+.flo{font-family:var(--f);font-size:20px;font-weight:800;color:#fff;margin-bottom:12px}
+.flo em{font-style:normal;color:var(--neon);text-shadow:0 0 12px rgba(0,191,255,.5)}
+.fde{font-size:13px;color:var(--muted);line-height:1.8;max-width:230px;margin-bottom:18px}
+.fso{display:flex;gap:8px}
+.fsc{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;text-decoration:none;transition:all .2s}
+.fsc:hover{border-color:var(--neon);color:var(--neon)}
+.fc h4{font-family:var(--f);font-size:11px;font-weight:700;color:#fff;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+.fl{list-style:none;display:flex;flex-direction:column;gap:8px}
+.fl a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.fl a:hover{color:var(--neon)}
+.fb{max-width:1100px;margin:0 auto;padding-top:22px;border-top:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted)}
+.fb em{font-style:normal;color:var(--neon)}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .75s ease,transform .75s ease}
+.rv.vis{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+
+/* MOBILE */
+@media(max-width:900px){
+  .nlinks,.ncta{display:none}.hbg{display:flex}
+  #hero{padding:130px 6% 60px}
+  .srow{grid-template-columns:repeat(2,1fr)}
+  .sbox{border-right:none;border-bottom:1px solid rgba(255,255,255,.05)}
+  .sbox:nth-child(odd){border-right:1px solid rgba(255,255,255,.05)}
+  .rc{width:calc(85% - 9px)}
+  .cgr{grid-template-columns:1fr}
+  .fg{grid-template-columns:1fr 1fr}
+  .fb{flex-direction:column;gap:8px;text-align:center}
+  #cta{padding:90px 0}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgc"></canvas>
+
+<!-- INTRO -->
+<div id="intro">
+  <canvas id="ic"></canvas>
+  <div class="ilw" id="ilw">
+    <div class="ilogo">
+      <span class="w1">Elite</span> <span class="w2">Core</span> <span class="w3">Media</span>
+    </div>
+    <div class="itagline">Content · Editing · Growth</div>
+    <div class="ibar" id="ibar"></div>
+  </div>
+  <div class="icorners">
+    <span class="ic-tl"></span><span class="ic-tr"></span>
+    <span class="ic-bl"></span><span class="ic-br"></span>
+  </div>
+  <div class="iprog" id="iprog"></div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#hero" class="nlogo">Elite <em>Core</em> Media</a>
+  <ul class="nlinks">
+    <li><a href="#video-editing">Videos</a></li>
+    <li><a href="#thumbnails">Thumbnails</a></li>
+    <li><a href="#channels">Clients</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <a href="#contact" class="ncta">Get Started</a>
+  <div class="hbg" onclick="document.getElementById('mnav').classList.toggle('open')"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div id="mnav" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(6,9,15,.97);z-index:700;flex-direction:column;align-items:center;justify-content:center;gap:32px;">
+  <div onclick="document.getElementById('mnav').classList.remove('open')" style="position:absolute;top:24px;right:24px;font-size:28px;color:var(--text);cursor:pointer;">✕</div>
+  <a href="#video-editing" onclick="document.getElementById('mnav').classList.remove('open')" style="font-family:var(--f);font-size:22px;font-weight:700;color:#fff;text-decoration:none;">Videos</a>
+  <a href="#thumbnails" onclick="document.getElementById('mnav').classList.remove('open')" style="font-family:var(--f);font-size:22px;font-weight:700;color:#fff;text-decoration:none;">Thumbnails</a>
+  <a href="#channels" onclick="document.getElementById('mnav').classList.remove('open')" style="font-family:var(--f);font-size:22px;font-weight:700;color:#fff;text-decoration:none;">Clients</a>
+  <a href="#reviews" onclick="document.getElementById('mnav').classList.remove('open')" style="font-family:var(--f);font-size:22px;font-weight:700;color:#fff;text-decoration:none;">Reviews</a>
+  <a href="#pricing" onclick="document.getElementById('mnav').classList.remove('open')" style="font-family:var(--f);font-size:22px;font-weight:700;color:#fff;text-decoration:none;">Pricing</a>
+  <a href="#faq" onclick="document.getElementById('mnav').classList.remove('open')" style="font-family:var(--f);font-size:22px;font-weight:700;color:#fff;text-decoration:none;">FAQ</a>
+  <a href="#contact" onclick="document.getElementById('mnav').classList.remove('open')" style="font-family:var(--f);font-size:22px;font-weight:700;color:var(--neon);text-decoration:none;">Get Started →</a>
+</div>
+<style>#mnav.open{display:flex!important}</style>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hg1"></div><div class="hg2"></div>
+  <div class="hcon rv">
+    <div class="hbadge"><span class="bd"></span>Full-Service Content Agency</div>
+    <h1 class="hh1">Your Content Has<br>Potential.<br><span class="glow">We Unlock It.</span></h1>
+    <p class="hsub">Elite Media helps creators and brands scale with premium video editing, click-worthy thumbnails, shorts, and full content operations.</p>
+    <div class="hbtns">
+      <a href="#contact" class="bb">Get Started →</a>
+      <a href="#video-editing" class="bo">View Our Work</a>
+    </div>
+    <div class="hpills">
+      <span class="pill">▶ Long-form Editing</span>
+      <span class="pill">⚡ Shorts / Reels</span>
+      <span class="pill">🖼 Thumbnails</span>
+      <span class="pill">📈 Creator Growth</span>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div id="stats">
+  <div class="srow">
+    <div class="sbox rv"><div class="snum" data-t="180" data-s="+">0+</div><div class="slbl">Videos Delivered</div></div>
+    <div class="sbox rv d1"><div class="snum" data-t="98" data-s="%">0%</div><div class="slbl">Client Satisfaction</div></div>
+    <div class="sbox rv d2"><div class="snum" data-t="200" data-s="M+">0M+</div><div class="slbl">Total Views Generated</div></div>
+    <div class="sbox rv d3"><div class="snum" data-t="5" data-s=" Yrs">0 Yrs</div><div class="slbl">Industry Experience</div></div>
+  </div>
+</div>
+
+<!-- VIDEO EDITING -->
+<section id="video-editing" class="sec">
+  <div class="sh">
+    <div class="stag rv">What We Edit</div>
+    <h2 class="stit rv">Featured <span class="glow">Videos</span></h2>
+    <p class="ssub rv">Premium long-form edits that keep audiences watching till the very end.</p>
+  </div>
+  <div class="car-wrap rv" id="vcw">
+    <div class="car-track" id="vct">
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/habibi_20260321/habibi.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Education</div><div class="vtit">Video 1</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/yo-yo-honey-singh/yo%20yo%20honey%20singh.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Animation</div><div class="vtit">Video 2</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/chipi_202603/chipi.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Education</div><div class="vtit">Video 3</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/chapa_202603/chapa.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Finance</div><div class="vtit">Video 4</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/boke-maharaj/boke%20maharaj.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Finance</div><div class="vtit">Video 5</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/mithi-toffe/mithi%20toffe.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Short form</div><div class="vtit">Video 6</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/khalo-aap/khalo%20aap.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Short Form</div><div class="vtit">Video 7</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/kya-chahiye/kya%20chahiye.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Documentary</div><div class="vtit">Video 8</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/tappu-sena/tappu%20sena.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Animation</div><div class="vtit">Video 9</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/aiii-tora-mai-ko-chodu/Aiii%20tora%20mai%20ko%20chodu.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Finance</div><div class="vtit">Video 10</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/piyushting-ki-jaiho/piyushting%20ki%20jaiho.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Finance</div><div class="vtit">Video 11</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/tillubaba/tillubaba.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Education</div><div class="vtit">Video 12</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/27s_20260322/27s.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Documentary</div><div class="vtit">Video 13</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/vid-20260223-wa-0007/VID-20260223-WA0007.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Documentary</div><div class="vtit">Video 14</div><div class="vmeta">Elite Core Media</div></div></div>
+      <div class="vc"><div class="vth"><video src="https://archive.org/download/comp-155/Comp%20155.mp4" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video></div><div class="vin"><div class="vcat">Education</div><div class="vtit">Video 15</div><div class="vmeta">Elite Core Media</div></div></div>
+    </div>
+  </div>
+  <div class="car-ctrl rv">
+    <button class="carr" onclick="mv('v',-1)">←</button>
+    <button class="carr" onclick="mv('v',1)">→</button>
+    <div class="cdots" id="vdots"></div>
+    <span style="font-size:12px;color:var(--muted);margin-left:auto">← Drag to explore</span>
+  </div>
+</section>
+
+<!-- THUMBNAILS -->
+<section id="thumbnails" class="sec" style="background:var(--bg2)">
+  <div class="sh">
+    <div class="stag rv">High-CTR Design</div>
+    <h2 class="stit rv">Thumbnail <span class="glow">Showcase</span></h2>
+    <p class="ssub rv">Engineered to stop the scroll and drive clicks — every design built for maximum CTR.</p>
+  </div>
+  <div class="car-wrap rv" id="tcw">
+    <div class="car-track" id="tct">
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/fzHcpCzN/Gr-VMmxm-XAAAaejf.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/s9VS4n4F/Gr-VMmxJXYAYH0Nd.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/C5ryD8wb/Gr-VMmvqWEAAx8KR.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/KpvTR7F5/Gr-VMmvYXMAAqYpl.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/gbCrKSkW/HCW1jh8agAACxX2.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/PGh3rnQ3/HCW1cRb0AADgnU.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/W4GKxXMP/G2WgjvYbkAEWSKl.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/rR6LThVz/HCW1bI6b0AAJbhk.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/2068FLnm/HCW1NhasAES64G.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/7Njj8cvh/HCW1NSaAAEGPHF.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/k2N6QDsf/HCW1NWaUAA9VY5.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/fzrnXCkF/HCW1NNbAAAqJKh.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/jZT43FPP/IMG-20250726-WA0004.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/CKMndFmM/harsh-valo.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/4wJP3mYh/secret-room.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+      <div class="tc"><div class="ta"><img src="https://i.ibb.co/q33mLjSs/kamla-3.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/></div><div class="tho"><span class="tlb">Your Thumbnail</span></div></div>
+    </div>
+  </div>
+  <div class="car-ctrl rv">
+    <button class="carr" onclick="mv('t',-1)">←</button>
+    <button class="carr" onclick="mv('t',1)">→</button>
+    <div class="cdots" id="tdots"></div>
+  </div>
+</section>
+<!-- FOUNDERS SECTION -->
+<section id="founders" style="padding:90px 6%;position:relative;z-index:1;background:var(--bg2);">
+  <div style="max-width:1100px;margin:0 auto;">
+
+    <!-- Section Tag -->
+    <div class="stag rv" style="justify-content:center">The Team</div>
+    <h2 class="stit rv" style="text-align:center;margin-bottom:60px;">Meet The <span class="glow">Founders</span></h2>
+
+    <!-- Images Row -->
+    <div style="position:relative;display:flex;justify-content:center;align-items:flex-end;gap:0;margin-bottom:40px;">
+
+      <!-- Neon Animation Line Behind Images -->
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70%;height:3px;z-index:0;">
+        <div style="width:100%;height:100%;background:linear-gradient(90deg,transparent,var(--neon),transparent);box-shadow:0 0 18px rgba(0,191,255,.8),0 0 40px rgba(0,191,255,.4);animation:neonpulse 2.5s ease-in-out infinite;"></div>
+      </div>
+
+      <!-- Founder Image -->
+      <div style="position:relative;z-index:2;text-align:center;">
+        <div style="width:200px;height:200px;border-radius:50%;overflow:hidden;border:3px solid rgba(0,191,255,0.6);box-shadow:0 0 30px rgba(0,191,255,0.4),0 0 60px rgba(0,191,255,0.15);margin:0 auto;position:relative;">
+          <img src="https://i.ibb.co/7JVF27P1/1000088890.jpg" style="width:100%;height:130%;object-fit:cover;object-position:center 10%;"/>
+        </div>
+        <div style="margin-top:14px;">
+          <div style="font-family:var(--f);font-size:16px;font-weight:800;color:#fff;">Abhishek Yadav</div>
+          <div style="font-size:11px;font-weight:600;color:var(--neon);letter-spacing:2px;text-transform:uppercase;margin-top:4px;text-shadow:0 0 8px rgba(0,191,255,.4);">Founder & CEO</div>
+        </div>
+      </div>
+
+      <!-- CFO Image -->
+      <div style="position:relative;z-index:2;text-align:center;">
+        <div style="width:200px;height:200px;border-radius:50%;overflow:hidden;border:3px solid rgba(0,191,255,0.6);box-shadow:0 0 30px rgba(0,191,255,0.4),0 0 60px rgba(0,191,255,0.15);margin:0 auto;position:relative;">
+          <img src="https://i.ibb.co/d4FGKnkz/IMG-20260331-WA0003.jpg" style="width:100%;height:130%;object-fit:cover;object-position:center 10%;"/>
+        </div>
+        <div style="margin-top:14px;">
+          <div style="font-family:var(--f);font-size:16px;font-weight:800;color:#fff;">Jashandeep Singh</div>
+          <div style="font-size:11px;font-weight:600;color:var(--neon);letter-spacing:2px;text-transform:uppercase;margin-top:4px;text-shadow:0 0 8px rgba(0,191,255,.4);">Co-Founder & CFO</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Single Shared Bio Box -->
+    <div style="max-width:700px;margin:0 auto;padding:30px 36px;border-radius:50px;background:rgba(255,255,255,0.05);border:1px solid rgba(0,191,255,0.2);backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.08),0 0 40px rgba(0,191,255,0.06);text-align:center;">
+      <p style="font-size:15px;color:var(--muted);line-height:1.9;font-weight:400;">We are the creative force behind <span style="color:#fff;font-weight:600;">Elite Core Media</span> — a premium content agency built for creators who are serious about growth. With deep expertise in video editing, thumbnail design, and content strategy, we don't just edit videos — we engineer content that converts viewers into loyal audiences and drives real, measurable results.</p>
+    </div>
+
+  </div>
+</section>
+
+<style>
+@keyframes neonpulse{
+  0%,100%{opacity:0.5;box-shadow:0 0 18px rgba(0,191,255,.6),0 0 40px rgba(0,191,255,.2);}
+  50%{opacity:1;box-shadow:0 0 28px rgba(0,191,255,1),0 0 70px rgba(0,191,255,.5),0 0 100px rgba(0,191,255,.2);}
+}
+</style>
+
+<!-- CHANNELS WE'VE WORKED WITH -->
+<section id="channels">
+  <div class="ch-inner">
+    <div class="stag rv" style="justify-content:center">Our Clients</div>
+    <h2 class="stit rv" style="text-align:center">Channels We've <span class="glow">Worked With</span></h2>
+    <p style="font-size:15px;color:var(--muted);text-align:center;max-width:460px;margin:0 auto;font-weight:400" class="rv">Real creators who trusted Elite Core Media to elevate their content.</p>
+    <div style="overflow:hidden;margin-top:40px;mask-image:linear-gradient(90deg,transparent,black 10%,black 90%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,black 10%,black 90%,transparent)">
+      <div class="slide-row slide-right">
+        <div class="ch-card"><img src="https://i.ibb.co/Y49pQ1J4/channels4-profile-5.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">David Heacock</div><div class="ch-subs">119K subscribers</div><div class="ch-niche">Business</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/j9t8SwG5/channels4-profile-6.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">will jake</div><div class="ch-subs">27K subscribers</div><div class="ch-niche">Education</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/FLSWCmwL/channels4-profile-4.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">Inayah McMillan</div><div class="ch-subs">227K subscribers</div><div class="ch-niche">Business</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/PZ29WBYY/unnamed.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">charlie chang</div><div class="ch-subs">1.42M subscribers</div><div class="ch-niche">Education / AI</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/G3FtnN66/channels4-profile-3.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">kris krohn</div><div class="ch-subs">1.12M subscribers</div><div class="ch-niche">Finance</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/Y49pQ1J4/channels4-profile-5.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">David Heacock</div><div class="ch-subs">119K subscribers</div><div class="ch-niche">Business</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/j9t8SwG5/channels4-profile-6.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">will jake</div><div class="ch-subs">27K subscribers</div><div class="ch-niche">Education</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/FLSWCmwL/channels4-profile-4.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">Inayah McMillan</div><div class="ch-subs">227K subscribers</div><div class="ch-niche">Business</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/PZ29WBYY/unnamed.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">charlie chang</div><div class="ch-subs">1.42M subscribers</div><div class="ch-niche">Education / AI</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/G3FtnN66/channels4-profile-3.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">kris krohn</div><div class="ch-subs">1.12M subscribers</div><div class="ch-niche">Finance</div><div class="ch-badge">Verified Client</div></div></div>
+      </div>
+    </div>
+    <div style="overflow:hidden;margin-top:16px;mask-image:linear-gradient(90deg,transparent,black 10%,black 90%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,black 10%,black 90%,transparent)">
+      <div class="slide-row slide-left">
+        <div class="ch-card"><img src="https://i.ibb.co/CKJwM3J1/unnamed.png" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">Tech with brett</div><div class="ch-subs">503K subscribers</div><div class="ch-niche">Tech</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/RwQKDjV/channels4-profile.png" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">cupina</div><div class="ch-subs">120K subscribers</div><div class="ch-niche">Gaming</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/psFS762/channels4-profile-2.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">Ecomsantiago</div><div class="ch-subs">1.6K subscribers</div><div class="ch-niche">Finance</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/kV1Sqkc7/channels4-profile-1.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">Nemanja</div><div class="ch-subs">3.17K subscribers</div><div class="ch-niche">Finance</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/gbk2B3Lt/channels4-profile.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">Richard Yu</div><div class="ch-subs">29.2K subscribers</div><div class="ch-niche">Finance</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/CKJwM3J1/unnamed.png" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">Tech with brett</div><div class="ch-subs">503K subscribers</div><div class="ch-niche">Tech</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/RwQKDjV/channels4-profile.png" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">cupina</div><div class="ch-subs">120K subscribers</div><div class="ch-niche">Gaming</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/psFS762/channels4-profile-2.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">Ecomsantiago</div><div class="ch-subs">1.6K subscribers</div><div class="ch-niche">Finance</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/kV1Sqkc7/channels4-profile-1.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">Nemanja</div><div class="ch-subs">3.17K subscribers</div><div class="ch-niche">Finance</div><div class="ch-badge">Verified Client</div></div></div>
+        <div class="ch-card"><img src="https://i.ibb.co/gbk2B3Lt/channels4-profile.jpg" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.12)"/><div><div class="ch-name">Richard Yu</div><div class="ch-subs">29.2K subscribers</div><div class="ch-niche">Finance</div><div class="ch-badge">Verified Client</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div style="max-width:1100px;margin:0 auto;padding:0 6%">
+    <div class="stag rv">Client Voices</div>
+    <h2 class="stit rv">What Creators <span class="glow">Say</span></h2>
+    <p class="ssub rv">Real feedback from real creators — no filters, no fluff.</p>
+  </div>
+  <div style="max-width:1100px;margin:0 auto;padding:0 6%">
+    <div class="rvp" id="rvp" style="margin-top:32px">
+      <div class="rtr" id="rtr">
+        <div class="rc"><div class="rst">★★★★★</div><p class="rtx">"Professional, fast, and they actually care about your growth. Best decision I've made for my channel."</p><div class="rau"><img src="https://i.ibb.co/KpyWSF1n/channels4-profile-7.jpg" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;"/><div><div class="rnm">Thomas</div><div class="rhd">★ 5.0 · Fitness Creator</div></div></div></div>
+        <div class="rc"><div class="rst">★★★★★</div><p class="rtx">"They handle everything. I just record and they do the magic. My views tripled in 2 months."</p><div class="rau"><img src="https://i.ibb.co/bjPVbpQy/channels4-profile-2.png" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;"/><div><div class="rnm">cliff olyson</div><div class="rhd">★ 4.9 · Education Creator</div></div></div></div>
+        <div class="rc"><div class="rst">★★★★★</div><p class="rtx">"Creative, reliable, and they genuinely care about your channel's growth. Worth every single penny."</p><div class="rau"><img src="https://i.ibb.co/ynTH2MB3/channels4-profile-1.png" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;"/><div><div class="rnm">Dave Birss</div><div class="rhd">★ 4.8 · Business Creator</div></div></div></div>
+        <div class="rc"><div class="rst">★★★★★</div><p class="rtx">"Best investment I've made. Thumbnails alone doubled my CTR overnight. Period."</p><div class="rau"><img src="https://i.ibb.co/FLSWCmwL/channels4-profile-4.jpg" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;"/><div><div class="rnm">Inayah McMillan</div><div class="rhd">★ 5.0 · Tech Creator</div></div></div></div>
+        <div class="rc"><div class="rst">★★★★★</div><p class="rtx">"Elite Media turned my raw footage into cinematic content. The turnaround is unreal — 24 hours every time."</p><div class="rau"><img src="https://i.ibb.co/CKJwM3J1/unnamed.png" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;"/><div><div class="rnm">Tech with brett</div><div class="rhd">★ 5.0 · Lifestyle Creator</div></div></div></div>
+        <div class="rc"><div class="rst">★★★★★</div><p class="rtx">"My thumbnails used to get 2% CTR. After Elite Media redesigned them — 8.4%. Not an exaggeration."</p><div class="rau"><img src="https://i.ibb.co/Y49pQ1J4/channels4-profile-5.jpg" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;"/><div><div class="rnm">David heacock</div><div class="rhd">★ 5.0 · Finance Creator</div></div></div></div>
+        <div class="rc"><div class="rst">★★★★★</div><p class="rtx">"Working with them feels like having a full in-house team. They know YouTube better than most creators."</p><div class="rau"><img src="https://i.ibb.co/kV1Sqkc7/channels4-profile-1.jpg" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;"/><div><div class="rnm">Nemanja</div><div class="rhd">★ 5.0 · Tech Creator</div></div></div></div>
+        <div class="rc"><div class="rst">★★★★★</div><p class="rtx">"The shorts they create for me consistently hit 500K+ views. Their hook game is absolutely unmatched."</p><div class="rau"><img src="https://i.ibb.co/gbk2B3Lt/channels4-profile.jpg" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;"/><div><div class="rnm">Richard Yu</div><div class="rhd">★ 5.0 · Health Creator</div></div></div></div>
+        <div class="rc"><div class="rst">★★★★★</div><p class="rtx">"Elite Media is the secret weapon behind my channel. If you're serious about YouTube — hire them now."</p><div class="rau"><img src="https://i.ibb.co/G3FtnN66/channels4-profile-3.jpg" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;"/><div><div class="rnm">kris krohn</div><div class="rhd">★ 5.0 · Finance Creator</div></div></div></div>
+      </div>
+    </div>
+    <div class="sct rv">
+      <button class="sar" id="rpv">←</button>
+      <button class="sar" id="rnx">→</button>
+      <div class="sds" id="rds"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div style="max-width:1100px;margin:0 auto;padding:0 6%">
+    <div class="stag rv">Investment</div>
+    <h2 class="stit rv">Plans &amp; <span class="glow">Pricing</span></h2>
+    <p class="ssub rv">No hidden fees. No surprises. Exceptional work at clear, fair prices.</p>
+    <div style="margin-top:64px;display:flex;justify-content:center;">
+      <div class="pc hot" data-d="200" style="max-width:480px;width:100%;">
+        <div class="pgl"></div>
+        <div class="pbg">Agency</div>
+        <div class="pcu">Custom</div>
+        <p class="pds">Full-scale content operations for brands, creators and agencies requiring enterprise-grade output.</p>
+        <div class="pdv"></div>
+        <ul class="pfl">
+          <li>Unlimited Edits</li>
+          <li>Full Content Strategy</li>
+          <li>Channel Management</li>
+          <li>Brand Kit Creation</li>
+          <li>Team of Editors</li>
+          <li>Analytics &amp; Reporting</li>
+          <li>White-label Available</li>
+        </ul>
+        <a href="#contact" class="bb" style="display:block;text-align:center;border-radius:50px">Contact Us →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div style="max-width:1100px;margin:0 auto;padding:0 6%">
+    <div class="stag rv" style="justify-content:center">Questions?</div>
+    <h2 class="stit rv" style="text-align:center">Frequently Asked <span class="glow">Questions</span></h2>
+    <p style="font-size:15px;color:var(--muted);text-align:center;max-width:460px;margin:0 auto" class="rv">Everything you need to know before getting started.</p>
+  </div>
+  <div class="fwr rv">
+    <div class="fi op"><div class="fq" onclick="tf(this)">Who is Elite Core Media NOT for?<div class="fic">+</div></div><div class="fa">If you aren't an expert at what you do, don't have an online business, or don't have a way to convert interested viewers — we're just not the right fit. However, if you have an online business and believe you're one of the best in your field, you will not find a more profitable way to scale your content outside of working with us.</div></div>
+    <div class="fi"><div class="fq" onclick="tf(this)">What results can I expect?<div class="fic">+</div></div><div class="fa">This highly depends on what kind of client you are. Worst case, you try but don't go all in, and you walk away with a 1–1.5x increase on the content you came in with. Best case, you implement everything and see results like our top clients — $30K to $188K/month in 88 days with zero paid ads. On average, most clients see a 2x–3x views increase on the low end, 10x–20x on the high end, and have already recouped their investment within the first month.</div></div>
+    <div class="fi"><div class="fq" onclick="tf(this)">How much does it cost?<div class="fic">+</div></div><div class="fa">We're one of the most premium content agencies in the market, and our pricing reflects that. If your priority is affordability, we'd suggest another option. If your priority is the best results in the fastest timeframe while building a brand that exudes quality — you'll love what we present on the call.</div></div>
+    <div class="fi"><div class="fq" onclick="tf(this)">What platforms do you help with?<div class="fic">+</div></div><div class="fa">We create content across Instagram, TikTok, Facebook, YouTube Shorts, LinkedIn, and more. Our primary focus is platforms best for client acquisition, but great videos perform everywhere — no need for different content per platform.</div></div>
+    <div class="fi"><div class="fq" onclick="tf(this)">Do I need a big audience to begin?<div class="fic">+</div></div><div class="fa">No. Audience size is never the issue — it's always about the client. As long as you're an expert, content is a priority, and you have an offer to monetize, Elite Core Media works regardless of where you're starting from.</div></div>
+    <div class="fi"><div class="fq" onclick="tf(this)">Do you have a guarantee?<div class="fic">+</div></div><div class="fa">The best way to answer this is to watch our work and client results. We're the most premium option in the market. If you resonate with our approach, let's talk. If affordability is the priority right now, we'd suggest looking elsewhere until you're in a place to upgrade — no hard feelings.</div></div>
+    <div class="fi"><div class="fq" onclick="tf(this)">Will this work for my niche?<div class="fic">+</div></div><div class="fa">Yes. We've worked with business owners across every niche imaginable and the niche is never the issue. As long as you're an expert in what you do, content is a priority, and you have an offer to monetize — Elite Core Media will work for your niche.</div></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div style="max-width:1100px;margin:0 auto;padding:0 6%">
+    <div class="stag rv">Get In Touch</div>
+    <h2 class="stit rv">Let's Build Something <span class="glow">Amazing</span></h2>
+    <p class="ssub rv">Have a project in mind? Drop us a message and we'll get back within 24 hours.</p>
+  </div>
+  <div class="cgr">
+    <div>
+      <div class="ci rv">
+        <div class="cic">✉</div>
+        <div><div class="clb">Email Us</div><div class="cvl"><a href="mailto:elitecoremedia@gmail.com" style="color:var(--text);text-decoration:none;">elitecoremedia@gmail.com</a></div></div>
+      </div>
+      <div class="ci rv d1">
+        <div class="cic">☏</div>
+        <div><div class="clb">Text Us</div><div class="cvl">+91 6280561146</div></div>
+      </div>
+      <div class="ci rv d2">
+        <div class="cic">◎</div>
+        <div><div class="clb">Location</div><div class="cvl">Ludhiana, Punjab, India</div></div>
+      </div>
+      <div class="ci rv d3">
+        <div class="cic">◷</div>
+        <div><div class="clb">Working Hours</div><div class="cvl">Mon – Sat, 24/6 IST</div></div>
+      </div>
+    </div>
+    
+    </div>
+  </div>
+</section>
+
+<!-- STOP SCROLLING / CTA -->
+<section id="cta">
+  <div id="floatReviews" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;"></div>
+  <div style="text-align:center;position:relative;z-index:2;width:100%;max-width:960px;margin:0 auto;padding:0 6%;">
+    <p style="font-size:clamp(13px,2vw,18px);color:var(--muted);font-weight:500;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">The decision is yours.</p>
+    <h2 style="font-family:var(--f);font-size:clamp(44px,8vw,100px);font-weight:800;color:#fff;line-height:1.02;letter-spacing:-3px;margin-bottom:8px;">Stop Scrolling.</h2>
+    <h2 style="font-family:var(--f);font-size:clamp(44px,8vw,100px);font-weight:800;line-height:1.02;letter-spacing:-3px;margin-bottom:40px;">
+      <span style="color:var(--neon);text-shadow:0 0 30px rgba(0,191,255,.6),0 0 70px rgba(0,191,255,.3);" id="typedText2"></span><span id="typeCursor2" style="color:var(--neon);animation:cur 1s infinite;">|</span>
+    </h2>
+    <p style="font-size:clamp(15px,2vw,18px);color:var(--muted);max-width:480px;margin:0 auto 48px;line-height:1.85;">Every day you wait is a day your competitors get ahead. Let's build your content empire — starting now.</p>
+    <a href="#contact" class="bb" style="font-size:17px;padding:18px 60px;display:inline-block;">Get Started Today →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fg">
+    <div>
+      <div class="flo">Elite <em>Core</em> Media</div>
+      <p class="fde">Premium video editing, thumbnails, and content operations for creators who want to grow.</p>
+    </div>
+    <div class="fc"><h4>Services</h4><ul class="fl"><li><a href="#">Video Editing</a></li><li><a href="#">Shorts / Reels</a></li><li><a href="#">Thumbnails</a></li><li><a href="#">Channel Strategy</a></li><li><a href="#">Motion Graphics</a></li></ul></div>
+    <div class="fc"><h4>Company</h4><ul class="fl"><li><a href="#">About Us</a></li><li><a href="#">Our Work</a></li><li><a href="#">Pricing</a></li><li><a href="#">Careers</a></li><li><a href="#">Blog</a></li></ul></div>
+    <div class="fc"><h4>Contact</h4><ul class="fl"><li><a href="mailto:elitecoremedia@gmail.com">elitecoremedia@gmail.com</a></li><li><a href="#">+91 6280561146</a></li><li><a href="#">Ludhiana, Punjab</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+  </div>
+  <div class="fb">
+    <span>© 2025 <em>Elite Core Media</em>. All rights reserved.</span>
+    <span>Made with ♥ in Ludhiana, India</span>
+  </div>
+</footer>
+
+<script>
+/* ── INTRO — black screen fix: CSS transition instead of JS animation, always exits ── */
+const mob = window.innerWidth < 768;
+const introEl = document.getElementById('intro');
+
+const introDelay = mob ? 220 : 1000;
+setTimeout(() => {
+  const ilw = document.getElementById('ilw');
+  if (ilw) ilw.classList.add('show');
+  setTimeout(() => { const b = document.getElementById('ibar'); if(b) b.classList.add('grow'); }, 300);
+  setTimeout(() => { const p = document.getElementById('iprog'); if(p) p.classList.add('run'); }, 500);
+}, introDelay);
+
+const exitAt = mob ? 2200 : 4000;
+setTimeout(() => {
+  introEl.classList.add('out');
+  setTimeout(() => {
+    introEl.style.display = 'none';
+    ir = false;
+    go();
+  }, 950);
+}, exitAt);
+
+/* ── BG CANVAS ── */
+const bgc = document.getElementById('bgc'), bgx = bgc.getContext('2d');
+let bw, bh;
+function rb(){ bw = bgc.width = window.innerWidth; bh = bgc.height = window.innerHeight; }
+rb(); window.addEventListener('resize', rb);
+
+const orbs = [
+  {x:.15,y:.2,r:340,vx:.00013,vy:.0001,c:'0,100,255'},
+  {x:.8,y:.1,r:280,vx:-.0001,vy:.00013,c:'0,191,255'},
+  {x:.5,y:.8,r:300,vx:.0001,vy:-.0001,c:'0,60,200'},
+  {x:.9,y:.55,r:220,vx:-.0001,vy:.00018,c:'0,150,255'},
+  {x:.3,y:.5,r:200,vx:.00008,vy:.00012,c:'0,80,255'}
+];
+const pts = Array.from({length: mob ? 20 : 80}, () => ({
+  x: Math.random(), y: Math.random(),
+  vx: (Math.random()-.5)*.00018, vy: (Math.random()-.5)*.00018,
+  r: Math.random()*2.2+.5, a: Math.random()*.55+.15,
+  flicker: Math.random()>.7, ft: Math.random()*100
+}));
+
+let bgT = 0;
+function dbg(){
+  bgT++;
+  bgx.clearRect(0,0,bw,bh);
+  orbs.forEach(o => {
+    o.x+=o.vx; o.y+=o.vy;
+    if(o.x<-.1||o.x>1.1) o.vx*=-1;
+    if(o.y<-.1||o.y>1.1) o.vy*=-1;
+    const g = bgx.createRadialGradient(o.x*bw,o.y*bh,0,o.x*bw,o.y*bh,o.r);
+    g.addColorStop(0,`rgba(${o.c},.18)`); g.addColorStop(1,`rgba(${o.c},0)`);
+    bgx.fillStyle=g; bgx.fillRect(0,0,bw,bh);
+  });
+  if(!mob){
+    bgx.strokeStyle='rgba(0,191,255,0.055)'; bgx.lineWidth=.5;
+    for(let x=0;x<bw;x+=80){bgx.beginPath();bgx.moveTo(x,0);bgx.lineTo(x,bh);bgx.stroke();}
+    for(let y=0;y<bh;y+=80){bgx.beginPath();bgx.moveTo(0,y);bgx.lineTo(bw,y);bgx.stroke();}
+  }
+  pts.forEach(p => {
+    p.x+=p.vx; p.y+=p.vy; p.ft++;
+    if(p.x<0)p.x=1; if(p.x>1)p.x=0;
+    if(p.y<0)p.y=1; if(p.y>1)p.y=0;
+    let alpha = p.a;
+    if(p.flicker){ alpha = p.a*(0.5+0.5*Math.sin(p.ft*.08)); }
+    bgx.beginPath(); bgx.arc(p.x*bw,p.y*bh,p.r,0,Math.PI*2);
+    bgx.fillStyle=`rgba(0,191,255,${alpha})`; bgx.fill();
+  });
+  requestAnimationFrame(dbg);
+}
+dbg();
+
+/* ── INTRO CANVAS ── */
+const ic = document.getElementById('ic'), ix = ic.getContext('2d');
+let iw, ih, it = 0, ir = true;
+function ric(){ iw = ic.width = window.innerWidth; ih = ic.height = window.innerHeight; } ric();
+const puffs = Array.from({length: mob?18:60}, () => ({
+  x: Math.random()*1.4-.2, y: Math.random()*1.4-.2,
+  r: Math.random()*160+50, a: Math.random()*.12+.03,
+  vx: (Math.random()-.5)*.0007, vy: (Math.random()-.5)*.0005,
+  gr: Math.random()*.55+.25, c: Math.random()>.5?'0,80,200':'0,150,255'
+}));
+function di(){
+  if(!ir) return; it++;
+  ix.clearRect(0,0,iw,ih); ix.fillStyle='#000'; ix.fillRect(0,0,iw,ih);
+  puffs.forEach(p => {
+    p.x+=p.vx; p.y+=p.vy; p.r+=p.gr; p.a*=.9955;
+    if(p.a<.003){ p.x=Math.random()*1.4-.2; p.y=Math.random()*1.4-.2; p.r=Math.random()*80+30; p.a=Math.random()*.08+.025; }
+    const g = ix.createRadialGradient(p.x*iw,p.y*ih,0,p.x*iw,p.y*ih,p.r);
+    g.addColorStop(0,`rgba(${p.c},${p.a})`);
+    g.addColorStop(.5,`rgba(${p.c},${p.a*.22})`);
+    g.addColorStop(1,`rgba(${p.c},0)`);
+    ix.fillStyle=g; ix.beginPath(); ix.arc(p.x*iw,p.y*ih,p.r,0,Math.PI*2); ix.fill();
+  });
+  if(it>40){
+    const pr=Math.min((it-40)/60,1), pulse=Math.sin(it*.04)*.3+.7;
+    const g2=ix.createRadialGradient(iw/2,ih/2,0,iw/2,ih/2,320*pr*pulse);
+    g2.addColorStop(0,`rgba(0,191,255,${.14*pr})`);
+    g2.addColorStop(.6,`rgba(0,100,255,${.05*pr})`);
+    g2.addColorStop(1,'rgba(0,150,255,0)');
+    ix.fillStyle=g2; ix.fillRect(0,0,iw,ih);
+    const ring=(it-40)%120/120;
+    ix.beginPath(); ix.arc(iw/2,ih/2,ring*Math.min(iw,ih)*.45,0,Math.PI*2);
+    ix.strokeStyle=`rgba(0,191,255,${(1-ring)*.2})`; ix.lineWidth=1; ix.stroke();
+  }
+  requestAnimationFrame(di);
+}
+di();
+
+/* ── NAV ── */
+window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('s', scrollY > 50));
+
+/* ── COUNTERS ── */
+function anc(el,t,s){ let st=null; (function step(ts){ if(!st)st=ts; const p=Math.min((ts-st)/2000,1),e=1-Math.pow(1-p,3); el.innerHTML=Math.floor(e*t)+'<b>'+s+'</b>'; if(p<1)requestAnimationFrame(step); })(performance.now()); }
+const so = new IntersectionObserver(en => { en.forEach(e => { if(e.isIntersecting){ document.querySelectorAll('[data-t]').forEach(el => anc(el,+el.dataset.t,el.dataset.s||'')); so.disconnect(); } }); }, {threshold:.5});
+const se = document.getElementById('stats'); if(se) so.observe(se);
+
+/* ── REVEAL ── */
+function go(){
+  const obs = new IntersectionObserver(en => { en.forEach(e => { if(e.isIntersecting){ e.target.classList.add('vis'); obs.unobserve(e.target); } }); }, {threshold:.07, rootMargin:'0px 0px -28px 0px'});
+  document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+  const po = new IntersectionObserver(en => { en.forEach(e => { if(e.isIntersecting){ const d=parseInt(e.target.dataset.d)||0; setTimeout(()=>e.target.classList.add('in'),d); po.unobserve(e.target); } }); }, {threshold:.1});
+  document.querySelectorAll('.pc').forEach(el => po.observe(el));
+}
+
+/* ── CAROUSELS ── */
+const cars = {
+  v: {track:'vct',dots:'vdots',total:15,cw:296,cur:0,vis:3,tmr:null},
+  t: {track:'tct',dots:'tdots',total:16,cw:256,cur:0,vis:4,tmr:null},
+};
+function initCar(k){
+  const c=cars[k], max=c.total-c.vis;
+  const dc=document.getElementById(c.dots);
+  if(dc){ dc.innerHTML=''; for(let i=0;i<=max;i++){ const d=document.createElement('div'); d.className='cdot'+(i===0?' on':''); d.onclick=()=>{c.cur=i;updateCar(k);}; dc.appendChild(d); } }
+  const tr=document.getElementById(c.track);
+  if(!tr) return;
+  let down=false,sx=0,ss=0;
+  tr.addEventListener('mousedown',e=>{down=true;sx=e.pageX;ss=c.cur;clearInterval(c.tmr);});
+  document.addEventListener('mouseup',()=>{if(down){down=false;if(!isVidPlaying())startAuto(k);}});
+  tr.addEventListener('mousemove',e=>{if(!down)return;const diff=sx-e.pageX;const step=Math.round(diff/c.cw);c.cur=Math.max(0,Math.min(max,ss+step));updateCar(k,false);});
+  tr.addEventListener('touchstart',e=>{sx=e.touches[0].pageX;ss=c.cur;clearInterval(c.tmr);},{passive:true});
+  tr.addEventListener('touchend',e=>{const d=sx-e.changedTouches[0].pageX;if(Math.abs(d)>40){c.cur=d>0?Math.min(max,c.cur+1):Math.max(0,c.cur-1);updateCar(k);}if(!isVidPlaying())startAuto(k);},{passive:true});
+  startAuto(k);
+}
+function updateCar(k,anim=true){
+  const c=cars[k],tr=document.getElementById(c.track);
+  if(!tr)return;
+  const max=c.total-c.vis;
+  c.cur=Math.max(0,Math.min(max,c.cur));
+  tr.style.transition=anim?'transform .65s cubic-bezier(.25,.46,.45,.94)':'none';
+  tr.style.transform=`translateX(-${c.cur*c.cw}px)`;
+  const dc=document.getElementById(c.dots);
+  if(dc){ dc.querySelectorAll('.cdot').forEach((d,i)=>d.classList.toggle('on',i===c.cur)); }
+}
+function mv(k,dir){ const c=cars[k],max=c.total-c.vis; c.cur=Math.max(0,Math.min(max,c.cur+dir)); updateCar(k); clearInterval(c.tmr); startAuto(k); }
+function startAuto(k){ const c=cars[k]; clearInterval(c.tmr); c.tmr=setInterval(()=>{ if(isVidPlaying())return; const max=c.total-c.vis; c.cur=c.cur>=max?0:c.cur+1; updateCar(k); },2000); }
+function isVidPlaying(){ const vids=document.querySelectorAll('video'); for(let v of vids){if(!v.paused&&!v.ended&&v.readyState>2)return true;} return false; }
+document.addEventListener('play',e=>{if(e.target.tagName==='VIDEO'){Object.keys(cars).forEach(k=>clearInterval(cars[k].tmr));}},true);
+document.addEventListener('pause',e=>{if(e.target.tagName==='VIDEO'){Object.keys(cars).forEach(k=>startAuto(k));}},true);
+window.addEventListener('load',()=>{ initCar('v'); initCar('t'); });
+
+/* ── REVIEWS SLIDER ── */
+let rc=0; const rt=9,rp=2,rm=rt-rp;
+function ru(){
+  const tr=document.getElementById('rtr'); if(!tr)return;
+  const card=tr.firstElementChild; if(!card)return;
+  const w=card.offsetWidth+18;
+  tr.style.transform=`translateX(-${rc*w}px)`;
+  const ds=document.getElementById('rds'); ds.innerHTML='';
+  for(let i=0;i<=rm;i++){ const d=document.createElement('div'); d.className='sd'+(i===rc?' on':''); d.onclick=()=>{rc=i;ru();}; ds.appendChild(d); }
+}
+document.getElementById('rpv').onclick=()=>{rc=Math.max(0,rc-1);ru();};
+document.getElementById('rnx').onclick=()=>{rc=Math.min(rm,rc+1);ru();};
+window.addEventListener('load',ru);
+setInterval(()=>{rc=rc>=rm?0:rc+1;ru();},4500);
+let rtx=0;
+const rvpEl=document.getElementById('rvp');
+rvpEl.addEventListener('touchstart',e=>{rtx=e.touches[0].pageX;},{passive:true});
+rvpEl.addEventListener('touchend',e=>{const d=rtx-e.changedTouches[0].pageX;if(Math.abs(d)>44){rc=d>0?Math.min(rm,rc+1):Math.max(0,rc-1);ru();}},{passive:true});
+
+/* ── FAQ ── */
+function tf(btn){ const i=btn.parentElement,o=i.classList.contains('op'); document.querySelectorAll('.fi.op').forEach(x=>x.classList.remove('op')); if(!o)i.classList.add('op'); }
+
+/* ── TYPEWRITER (Stop Scrolling section) ── */
+const tw=['Start Creating.','Start Growing.','Start Winning.','Start Now.'];
+let twi=0,tci=0,tdel=false,ttyped='';
+function typeIt2(){
+  const word=tw[twi];
+  if(!tdel){ ttyped=word.slice(0,++tci); if(tci===word.length){tdel=true;setTimeout(typeIt2,2200);return;} }
+  else{ ttyped=word.slice(0,--tci); if(tci===0){tdel=false;twi=(twi+1)%tw.length;setTimeout(typeIt2,400);return;} }
+  const el=document.getElementById('typedText2'); if(el) el.textContent=ttyped;
+  setTimeout(typeIt2,tdel?55:90);
+}
+typeIt2();
+
+/* ── FLOATING REVIEWS ── */
+const freviews=[
+  {text:'"My views went from 40K to 850K in 3 months."',name:'— Marcus J. · Finance Creator',top:'8%',left:'2%',anim:'fz1',dur:'9s',delay:'0s'},
+  {text:'"Best investment I\'ve ever made. Period."',name:'— Wes R. · Tech Creator',top:'6%',right:'3%',anim:'fz2',dur:'8s',delay:'1s'},
+  {text:'"CTR went from 2% to 8.4% after their thumbnail work."',name:'— Ryan T. · Business',top:'32%',left:'1%',anim:'fz3',dur:'10s',delay:'2s'},
+  {text:'"I just record. They do the rest. Channel doubled in 60 days."',name:'— Sofia P. · Lifestyle',top:'30%',right:'2%',anim:'fz1',dur:'11s',delay:'0.5s'},
+  {text:'"From 10K to 85K subscribers in 4 months."',name:'— Jake M. · Tech Creator',top:'58%',left:'2%',anim:'fz2',dur:'9s',delay:'3s'},
+  {text:'"Shorts consistently hit 500K+ views. Insane hook game."',name:'— Neha R. · Health',top:'55%',right:'1%',anim:'fz3',dur:'8s',delay:'1.5s'},
+  {text:'"Handed off my YouTube channel. Best decision ever."',name:'— Kiran N. · Entrepreneur',top:'78%',left:'3%',anim:'fz1',dur:'10s',delay:'2.5s'},
+  {text:'"Retention went through the roof after the first edit."',name:'— Aryan S. · Finance',top:'76%',right:'2%',anim:'fz2',dur:'9s',delay:'0.8s'},
+];
+const fc=document.getElementById('floatReviews');
+freviews.forEach(r=>{
+  const d=document.createElement('div'); d.className='fr-item';
+  d.style.animation=`${r.anim} ${r.dur} ease-in-out infinite ${r.delay}`;
+  if(r.top)d.style.top=r.top; if(r.left)d.style.left=r.left; if(r.right)d.style.right=r.right;
+  d.innerHTML=`${r.text}<div class="fr-name">${r.name}</div>`;
+  fc.appendChild(d);
+});
+</script>
+</body>
+</html>
